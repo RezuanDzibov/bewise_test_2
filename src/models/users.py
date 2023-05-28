@@ -7,6 +7,6 @@ from models import Base
 
 
 class User(Base):
-    id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str]
-    access_token: Mapped[UUID] = mapped_column(UUID(as_uuid=True), default=uuid4)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    username: Mapped[str] = mapped_column(nullable=False)
+    access_token: Mapped[UUID] = mapped_column(UUID(as_uuid=True), default=uuid4, nullable=False)
