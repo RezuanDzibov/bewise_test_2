@@ -1,0 +1,48 @@
+name: Run tests
+
+on: [push, pull_request]
+
+env:
+  POSTGRES_USER: bewise
+  POSTGRES_PASSWORD: bewisepassword
+  POSTGRES_DATABASE: bewise
+  POSTGRES_DB: bewise
+  POSTGRES_PORT: 5432
+  POSTGRES_HOST: localhost
+  DATABASE_ENGINE: postgresql+asyncpg
+  PROJECT_NAME: Bewise Audios API
+permissions:
+  contents: read
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:14
+        env:
+          POSTGRES_USER: ${{ env.POSTGRES_USER}}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_PORT: ${{ env.POSTGRES_PORT }}
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.11.1
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.11.1"
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        curl -sSL https://install.python-poetry.org | python
+        poetry config virtualenvs.create false 
+        poetry install --with dev --no-interaction --no-ansi --no-root
+    - name: Test with pytest
+      working-directory: .
+      run: |
+        pytest -vv
