@@ -1,0 +1,41 @@
+services:
+  db:
+    container_name: postgres
+    env_file:
+      - .env
+    restart: always
+    image: postgres:15.2
+    volumes:
+      - bewise_test_2_postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+    expose:
+      - ${POSTGRES_PORT}
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  api:
+    environment:
+      RUN_IN_DOCKER: True
+      POSTGRES_SERVICE_HOST: db
+    container_name: api
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    restart: always
+    build: .
+    command: bash -c "cd src && uvicorn main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - 8000:8000
+
+volumes:
+  bewise_test_2_postgres_data:
