@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from starlette.responses import RedirectResponse
 
 from core.settings import get_settings
+from endpoints.routes import router
 
 settings = get_settings()
 
