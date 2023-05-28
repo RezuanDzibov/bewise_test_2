@@ -26,6 +26,10 @@ class Settings(BaseSettings):
             path=f"/{self.POSTGRES_DATABASE}",
         )
 
+    @property
+    def MEDIA_PATH(self) -> Path:
+        return BASE_DIR.joinpath("media")
+
     class Config:
         env_file = Path(f"{BASE_DIR}/.env")
 
