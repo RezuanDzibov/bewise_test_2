@@ -38,7 +38,7 @@ async def add_audiotrack(
         )
     except AudioFileCorruptException:
         raise HTTPException(status_code=400, detail="File corrupted")
-    return f"http://{settings.API_HOST}:{settings.API_PORT}/audiotrack?id={audiotrack_id}&user={audiotrack.user_id}"
+    return f"{settings.API_URL}/audiotrack?id={audiotrack_id}&user={audiotrack.user_id}"
 
 
 @router.get("")
