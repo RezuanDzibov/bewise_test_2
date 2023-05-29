@@ -1,4 +1,6 @@
-from sqlalchemy import insert
+from uuid import UUID
+
+from sqlalchemy import insert, and_, exists
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import User
@@ -17,3 +19,16 @@ async def insert_user(
         id=user_in_db.id, access_token=user_in_db.access_token
     )
     return user_out_schema
+
+
+async def validate_user_access_token(
+    session: AsyncSession, user_id: int, access_token: UUID
+) -> bool:
+    statement = (
+        exists()
+        .where(and_(User.id == user_id, User.access_token == access_token))
+        .select()
+    )
+    result = await session.execute(statement)
+    is_exists = result.scalar()
+    return is_exists
