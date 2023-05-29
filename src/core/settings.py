@@ -16,8 +16,7 @@ class Settings(BaseSettings):
     POSTGRES_DATABASE: str
     POSTGRES_HOST: str
 
-    API_HOST: str
-    API_PORT: int
+    API_URL: str = "http://127.0.0.1:8000"
 
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
