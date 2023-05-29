@@ -2,5 +2,5 @@ class AudioFileCorruptException(Exception):
     pass
 
 
-class AudioTrackNotFound(Exception):
+class AudioTrackNotFoundException(Exception):
     pass
