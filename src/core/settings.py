@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     POSTGRES_DATABASE: str
     POSTGRES_HOST: str
 
+    API_HOST: str
+    API_PORT: int
+
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
         return PostgresDsn.build(

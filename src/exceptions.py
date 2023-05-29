@@ -1,0 +1,2 @@
+class AudioFileCorruptException(Exception):
+    pass
