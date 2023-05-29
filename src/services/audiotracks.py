@@ -7,13 +7,14 @@ import aiofiles
 from fastapi import UploadFile
 from pydub import AudioSegment
 from pydub.exceptions import PydubException
-from sqlalchemy import insert
+from sqlalchemy import insert, select, and_
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from schemas.audiotracks import AudioTrackInSchema
 from core.settings import get_settings
 from models.audiotracks import AudioTrack
-from exceptions import AudioFileCorruptException
+from exceptions import AudioFileCorruptException, AudioTrackNotFoundException
 
 settings = get_settings()
 
@@ -77,3 +78,13 @@ async def insert_audiotrack_and_get_it_id(
     )
     await _save_file(filepath=filepath, file_content=file_content_in_mp3)
     return audiotrack_id
+
+
+async def get_audiotrack(session: AsyncSession, audiotrack_id: UUID, user_id: int):
+    statement = select(AudioTrack).where(and_(AudioTrack.id == audiotrack_id, AudioTrack.author == user_id))
+    result = await session.execute(statement)
+    try:
+        audiotrack = result.scalar()
+    except NoResultFound:
+        raise AudioTrackNotFoundException
+    return audiotrack
