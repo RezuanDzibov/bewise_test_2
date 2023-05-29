@@ -1,4 +1,4 @@
-from pydantic import BaseModel, constr, UUID4
+from pydantic import BaseModel, constr, UUID4, conint
 
 
 class UserInSchema(BaseModel):
@@ -6,5 +6,5 @@ class UserInSchema(BaseModel):
 
 
 class UserOutSchema(BaseModel):
-    id: int
+    id: conint(ge=1)
     access_token: UUID4
