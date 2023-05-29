@@ -43,15 +43,16 @@ async def add_audiotrack(
 
 @router.get("")
 async def get_audiotrack_file(
-        audiotrack_in: AudioFileInSchema = Depends(),
-        session: AsyncSession = Depends(get_session)
+    audiotrack_in: AudioFileInSchema = Depends(),
+    session: AsyncSession = Depends(get_session),
 ) -> FileResponse:
     try:
         audiotrack = await audiotrack_services.get_audiotrack(
-            session=session,
-            audiotrack_id=audiotrack_in.id,
-            user_id=audiotrack_in.user
+            session=session, audiotrack_id=audiotrack_in.id, user_id=audiotrack_in.user
         )
     except AudioTrackNotFoundException:
         raise HTTPException(status_code=404, detail="Audiotrack not found")
-    return FileResponse(path=f"{settings.MEDIA_PATH}/{audiotrack.filepath}", filename=f"{audiotrack.filename}.mp3")
+    return FileResponse(
+        path=f"{settings.MEDIA_PATH}/{audiotrack.filepath}",
+        filename=f"{audiotrack.filename}.mp3",
+    )
