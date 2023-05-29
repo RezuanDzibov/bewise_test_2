@@ -27,9 +27,9 @@ async def _generate_filepath(filename: str, user_id: int) -> str:
 
 
 async def _insert_audiotrack(
-    session: AsyncSession, user_id: int, filepath: str
+    session: AsyncSession, user_id: int, filepath: str, filename: str
 ) -> UUID:
-    statement = insert(AudioTrack).values(author=user_id, file_path=filepath)
+    statement = insert(AudioTrack).values(author=user_id, filepath=filepath, filename=filename)
     statement = statement.returning(AudioTrack.id)
     result = await session.execute(statement)
     await session.commit()
@@ -70,7 +70,10 @@ async def insert_audiotrack_and_get_it_id(
         user_id=audiotrack_in_schema.user_id,
     )
     audiotrack_id = await _insert_audiotrack(
-        session, user_id=audiotrack_in_schema.user_id, filepath=filepath.split("/")[-1]
+        session,
+        user_id=audiotrack_in_schema.user_id,
+        filepath=filepath.split("/")[-1],
+        filename=file.filename.split(".")[0]
     )
     await _save_file(filepath=filepath, file_content=file_content_in_mp3)
     return audiotrack_id
