@@ -20,9 +20,7 @@ settings = get_settings()
 
 
 async def _generate_filepath(filename: str, user_id: int) -> str:
-    current_datetime = (
-        "-".join(str(datetime.now()).split(" ")).replace(":", "-").replace(".", "-")
-    )
+    current_datetime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
     filepath = settings.MEDIA_PATH / f"{current_datetime}_{user_id}_{filename}"
     return str(filepath)
 
