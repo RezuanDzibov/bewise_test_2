@@ -40,11 +40,11 @@ async def add_audiotrack(
     return AudioTrackOutSchema(audiotrack_url=f"{settings.API_URL}/audiotrack?id={audiotrack_id}&user={user.id}")
 
 
-@router.get("")
+@router.get("", response_class=FileResponse)
 async def get_audiotrack_file(
     audiotrack_in: AudioFileInSchema = Depends(),
     session: AsyncSession = Depends(get_session),
-) -> FileResponse:
+):
     try:
         audiotrack = await audiotrack_services.get_audiotrack(
             session=session, audiotrack_id=audiotrack_in.id, user_id=audiotrack_in.user
