@@ -1,4 +1,4 @@
-from sqlalchemy import insert, and_, select
+from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import User
@@ -19,12 +19,10 @@ async def insert_user(
     return user_out_schema
 
 
-async def get_user_by_id_and_access_token(
-    session: AsyncSession, user_id: int, access_token: str
+async def get_user_by_access_token(
+    session: AsyncSession, access_token: str
 ) -> UserSchema | None:
-    statement = select(User).where(
-        and_(User.id == user_id, User.access_token == access_token)
-    )
+    statement = select(User).where(User.access_token == access_token)
     result = await session.execute(statement)
     user = result.scalar()
     if user:
