@@ -59,7 +59,7 @@ def _convert_wav_to_mp3(file_content: bytes) -> bytes:
 
 
 async def insert_audiotrack_and_get_it_id(
-    session: AsyncSession, file: UploadFile, audiotrack_in_schema: AudioTrackInSchema
+    session: AsyncSession, file: UploadFile, user_id: int
 ) -> UUID:
     file_content = await file.read()
     loop = asyncio.get_event_loop()
@@ -68,11 +68,11 @@ async def insert_audiotrack_and_get_it_id(
     )
     filepath = await _generate_filepath(
         filename=file.filename.split(".")[0] + ".mp3",
-        user_id=audiotrack_in_schema.user_id,
+        user_id=user_id,
     )
     audiotrack_id = await _insert_audiotrack(
         session,
-        user_id=audiotrack_in_schema.user_id,
+        user_id=user_id,
         filepath=filepath.split("/")[-1],
         filename=file.filename.split(".")[0],
     )
