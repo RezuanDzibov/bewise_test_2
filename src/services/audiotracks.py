@@ -73,14 +73,13 @@ async def insert_audiotrack_and_get_it_id(
         filename=file.filename.split(".")[0] + ".mp3",
         user_id=user_id,
     )
-    audiotrack_id = await _insert_audiotrack(
+    await _save_file(filepath=filepath, file_content=file_content_in_mp3)
+    return await _insert_audiotrack(
         session,
         user_id=user_id,
         filepath=filepath.split("/")[-1],
         filename=file.filename.split(".")[0],
     )
-    await _save_file(filepath=filepath, file_content=file_content_in_mp3)
-    return audiotrack_id
 
 
 async def get_audiotrack(session: AsyncSession, audiotrack_id: UUID, user_id: int):
