@@ -85,8 +85,7 @@ async def get_audiotrack(session: AsyncSession, audiotrack_id: UUID, user_id: in
         and_(AudioTrack.id == audiotrack_id, AudioTrack.author == user_id)
     )
     result = await session.execute(statement)
-    try:
-        audiotrack = result.scalar()
-    except NoResultFound:
+    audiotrack = result.scalar()
+    if not audiotrack:
         raise AudioTrackNotFoundException
     return audiotrack
