@@ -2,7 +2,6 @@ import asyncio
 import concurrent.futures
 import io
 from datetime import datetime
-from typing import AsyncGenerator
 from uuid import UUID
 
 import aiofiles
@@ -10,10 +9,8 @@ from fastapi import UploadFile
 from pydub import AudioSegment
 from pydub.exceptions import PydubException
 from sqlalchemy import insert, select, and_
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from schemas.audiotracks import AudioTrackInSchema
 from core.settings import get_settings
 from models.audiotracks import AudioTrack
 from exceptions import AudioFileCorruptException, AudioTrackNotFoundException
