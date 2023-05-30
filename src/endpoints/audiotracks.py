@@ -1,3 +1,5 @@
+import os
+
 from fastapi import APIRouter, UploadFile, Depends
 from fastapi.exceptions import HTTPException
 from fastapi.responses import FileResponse
@@ -52,7 +54,10 @@ async def get_audiotrack_file(
         )
     except AudioTrackNotFoundException:
         raise HTTPException(status_code=404, detail="Audiotrack not found")
+    filepath = f"{settings.MEDIA_PATH}/{audiotrack.filepath}"
+    if not os.path.isfile(filepath):
+        raise HTTPException(status_code=404, detail="Audiotrack file not found")
     return FileResponse(
-        path=f"{settings.MEDIA_PATH}/{audiotrack.filepath}",
+        path=filepath,
         filename=f"{audiotrack.filename}.mp3",
     )
