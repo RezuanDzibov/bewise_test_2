@@ -10,5 +10,4 @@ router = APIRouter()
 
 @router.post("", response_model=UserOutSchema)
 async def add_user(user: UserInSchema, session: AsyncSession = Depends(get_session)):
-    user = await insert_user(session=session, user_in_schema=user)
-    return user
+    return await insert_user(session=session, user_in_schema=user)
