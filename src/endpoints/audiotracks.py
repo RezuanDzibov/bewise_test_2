@@ -1,14 +1,14 @@
 import os
 
-from fastapi import APIRouter, UploadFile, Depends
+from fastapi import APIRouter, UploadFile, Depends, Form
 from fastapi.exceptions import HTTPException
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import HttpUrl
+from pydantic import conint
 
 from core.settings import get_settings
 from dependencies import get_session, get_user
-from schemas.audiotracks import AudioFileInSchema
+from schemas.audiotracks import AudioFileInSchema, AudioTrackOutSchema
 from schemas.users import UserSchema
 from services import audiotracks as audiotrack_services
 from exceptions import AudioFileCorruptException, AudioTrackNotFoundException
@@ -17,12 +17,15 @@ settings = get_settings()
 router = APIRouter()
 
 
-@router.post("", response_model=HttpUrl)
+@router.post("", response_model=AudioTrackOutSchema)
 async def add_audiotrack(
     file: UploadFile,
+    user_id: conint(ge=1) = Form(...),
     user: UserSchema = Depends(get_user),
     session: AsyncSession = Depends(get_session),
 ):
+    if user_id != user.id:
+        raise HTTPException(status_code=403, detail="User id or access_token invalid")
     if file.content_type not in ["audio/wav", "audio/wave"]:
         raise HTTPException(
             status_code=400,
@@ -34,7 +37,7 @@ async def add_audiotrack(
         )
     except AudioFileCorruptException:
         raise HTTPException(status_code=400, detail="File corrupted")
-    return f"{settings.API_URL}/audiotrack?id={audiotrack_id}&user={user.id}"
+    return AudioTrackOutSchema(audiotrack_url=f"{settings.API_URL}/audiotrack?id={audiotrack_id}&user={user.id}")
 
 
 @router.get("")
