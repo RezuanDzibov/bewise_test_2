@@ -13,7 +13,7 @@ app = FastAPI(title=settings.PROJECT_NAME)
 app.include_router(router)
 
 
-@app.get("/")
+@app.get("/", include_in_schema=False)
 async def redirect_to_docs():
     return RedirectResponse("/docs")
 
