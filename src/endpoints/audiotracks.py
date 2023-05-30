@@ -7,10 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import HttpUrl
 
 from core.settings import get_settings
-from dependencies import get_session
-from schemas.audiotracks import AudioTrackInSchema, AudioFileInSchema
+from dependencies import get_session, get_user
+from schemas.audiotracks import AudioFileInSchema
+from schemas.users import UserSchema
 from services import audiotracks as audiotrack_services
-from services.users import validate_user_access_token
 from exceptions import AudioFileCorruptException, AudioTrackNotFoundException
 
 settings = get_settings()
@@ -20,27 +20,21 @@ router = APIRouter()
 @router.post("", response_model=HttpUrl)
 async def add_audiotrack(
     file: UploadFile,
-    audiotrack: AudioTrackInSchema = Depends(),
+    user: UserSchema = Depends(get_user),
     session: AsyncSession = Depends(get_session),
 ):
-    if file.content_type != "audio/wav":
+    if file.content_type not in ["audio/wav", "audio/wave"]:
         raise HTTPException(
             status_code=400,
             detail=f"File type of {file.content_type} is not supported, only wav",
         )
-    if not await validate_user_access_token(
-        session=session,
-        user_id=audiotrack.user_id,
-        access_token=audiotrack.access_token,
-    ):
-        raise HTTPException(status_code=403, detail="User id or access token invalid")
     try:
         audiotrack_id = await audiotrack_services.insert_audiotrack_and_get_it_id(
-            session, file=file, audiotrack_in_schema=audiotrack
+            session, file=file, user_id=user.id
         )
     except AudioFileCorruptException:
         raise HTTPException(status_code=400, detail="File corrupted")
-    return f"{settings.API_URL}/audiotrack?id={audiotrack_id}&user={audiotrack.user_id}"
+    return f"{settings.API_URL}/audiotrack?id={audiotrack_id}&user={user.id}"
 
 
 @router.get("")
