@@ -1,6 +1,8 @@
 import asyncio
+import concurrent.futures
 import io
 from datetime import datetime
+from typing import AsyncGenerator
 from uuid import UUID
 
 import aiofiles
@@ -63,9 +65,10 @@ async def insert_audiotrack_and_get_it_id(
 ) -> UUID:
     file_content = await file.read()
     loop = asyncio.get_event_loop()
-    file_content_in_mp3 = await loop.run_in_executor(
-        None, _convert_wav_to_mp3, file_content
-    )
+    with concurrent.futures.ProcessPoolExecutor as pool:
+        file_content_in_mp3 = await loop.run_in_executor(
+            pool, _convert_wav_to_mp3, file_content
+        )
     filepath = await _generate_filepath(
         filename=file.filename.split(".")[0] + ".mp3",
         user_id=user_id,
