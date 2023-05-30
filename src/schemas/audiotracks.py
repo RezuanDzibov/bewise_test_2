@@ -1,4 +1,4 @@
-from pydantic import BaseModel, conint, UUID4
+from pydantic import BaseModel, conint, UUID4, HttpUrl
 
 
 class AudioTrackInSchema(BaseModel):
@@ -9,3 +9,7 @@ class AudioTrackInSchema(BaseModel):
 class AudioFileInSchema(BaseModel):
     id: UUID4
     user: conint(ge=1)
+
+
+class AudioTrackOutSchema(BaseModel):
+    audiotrack_url: HttpUrl
