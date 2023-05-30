@@ -20,8 +20,7 @@ settings = get_settings()
 
 async def _generate_filepath(filename: str, user_id: int) -> str:
     current_datetime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
-    filepath = settings.MEDIA_PATH / f"{current_datetime}_{user_id}_{filename}"
-    return str(filepath)
+    return str(settings.MEDIA_PATH / f"{current_datetime}_{user_id}_{filename}")
 
 
 async def _insert_audiotrack(
@@ -33,8 +32,7 @@ async def _insert_audiotrack(
     statement = statement.returning(AudioTrack.id)
     result = await session.execute(statement)
     await session.commit()
-    audiotrack_id = result.scalar()
-    return audiotrack_id
+    return result.scalar()
 
 
 async def _save_file(filepath: str, file_content: bytes) -> None:
@@ -53,8 +51,7 @@ def _convert_wav_to_mp3(file_content: bytes) -> bytes:
     except PydubException:
         raise AudioFileCorruptException
     mp3_file.seek(0)
-    mp3_content = mp3_file.read()
-    return mp3_content
+    return mp3_file.read()
 
 
 async def insert_audiotrack_and_get_it_id(
