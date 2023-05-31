@@ -1,9 +1,9 @@
 from uuid import uuid4
 
-from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column
 
-from models import Base
+from models.base import Base
 
 
 class User(Base):

@@ -1,5 +1,7 @@
 import asyncio
+import concurrent.futures
 import io
+import os.path
 from datetime import datetime
 from uuid import UUID
 
@@ -8,21 +10,18 @@ from fastapi import UploadFile
 from pydub import AudioSegment
 from pydub.exceptions import PydubException
 from sqlalchemy import insert, select, and_
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from schemas.audiotracks import AudioTrackInSchema
 from core.settings import get_settings
+from exceptions import AudioFileCorruptException, AudioTrackNotFoundException, AudioTrackFileNotFoundException
 from models.audiotracks import AudioTrack
-from exceptions import AudioFileCorruptException, AudioTrackNotFoundException
 
 settings = get_settings()
 
 
 async def _generate_filepath(filename: str, user_id: int) -> str:
     current_datetime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
-    filepath = settings.MEDIA_PATH / f"{current_datetime}_{user_id}_{filename}"
-    return str(filepath)
+    return str(settings.MEDIA_PATH / f"{current_datetime}_{user_id}_{filename}")
 
 
 async def _insert_audiotrack(
@@ -34,8 +33,7 @@ async def _insert_audiotrack(
     statement = statement.returning(AudioTrack.id)
     result = await session.execute(statement)
     await session.commit()
-    audiotrack_id = result.scalar()
-    return audiotrack_id
+    return result.scalar()
 
 
 async def _save_file(filepath: str, file_content: bytes) -> None:
@@ -54,8 +52,7 @@ def _convert_wav_to_mp3(file_content: bytes) -> bytes:
     except PydubException:
         raise AudioFileCorruptException
     mp3_file.seek(0)
-    mp3_content = mp3_file.read()
-    return mp3_content
+    return mp3_file.read()
 
 
 async def insert_audiotrack_and_get_it_id(
@@ -63,21 +60,28 @@ async def insert_audiotrack_and_get_it_id(
 ) -> UUID:
     file_content = await file.read()
     loop = asyncio.get_event_loop()
-    file_content_in_mp3 = await loop.run_in_executor(
-        None, _convert_wav_to_mp3, file_content
-    )
+    with concurrent.futures.ProcessPoolExecutor() as pool:
+        file_content_in_mp3 = await loop.run_in_executor(
+            pool, _convert_wav_to_mp3, file_content
+        )
     filepath = await _generate_filepath(
         filename=file.filename.split(".")[0] + ".mp3",
         user_id=user_id,
     )
-    audiotrack_id = await _insert_audiotrack(
+    await _save_file(filepath=filepath, file_content=file_content_in_mp3)
+    return await _insert_audiotrack(
         session,
         user_id=user_id,
         filepath=filepath.split("/")[-1],
-        filename=file.filename.split(".")[0],
+        filename=f"{file.filename.split('.')[0]}.mp3",
     )
-    await _save_file(filepath=filepath, file_content=file_content_in_mp3)
-    return audiotrack_id
+
+
+async def construct_filepath_and_check_if_file_exists(path: str):
+    filepath = f"{settings.MEDIA_PATH}/{path}"
+    if not os.path.isfile(filepath):
+        raise AudioTrackFileNotFoundException
+    return filepath
 
 
 async def get_audiotrack(session: AsyncSession, audiotrack_id: UUID, user_id: int):
