@@ -12,6 +12,7 @@ from schemas.users import UserSchema
 from services import audiotracks as audiotrack_services
 from services.audiotracks import construct_filepath_and_check_if_file_exists
 
+
 settings = get_settings()
 router = APIRouter()
 
@@ -36,7 +37,7 @@ async def add_audiotrack(
         )
     except AudioFileCorruptException:
         raise HTTPException(status_code=400, detail="File corrupted")
-    return AudioTrackOutSchema(audiotrack_url=f"{settings.API_URL}/audiotrack?id={audiotrack_id}&user={user.id}")
+    return AudioTrackOutSchema(audiotrack_url=f"{settings.API_URL}/audiotrack?id={audiotrack_id}&user={user
 
 
 @router.get("", response_class=FileResponse)

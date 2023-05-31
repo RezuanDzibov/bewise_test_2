@@ -2,12 +2,14 @@ from typing import AsyncGenerator
 
 from fastapi import Depends, Security, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import conint
+
 
 from core.db import SessionLocal
 from core.settings import get_settings
 from schemas.users import UserSchema
 from services.users import get_user_by_access_token
+
 
 settings = get_settings()
 bearer = HTTPBearer()
