@@ -13,8 +13,8 @@ from sqlalchemy import insert, select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.settings import get_settings
-from models.audiotracks import AudioTrack
 from exceptions import AudioFileCorruptException, AudioTrackNotFoundException, AudioTrackFileNotFoundException
+from models.audiotracks import AudioTrack
 
 settings = get_settings()
 
@@ -60,7 +60,7 @@ async def insert_audiotrack_and_get_it_id(
 ) -> UUID:
     file_content = await file.read()
     loop = asyncio.get_event_loop()
-    with concurrent.futures.ProcessPoolExecutor as pool:
+    with concurrent.futures.ProcessPoolExecutor() as pool:
         file_content_in_mp3 = await loop.run_in_executor(
             pool, _convert_wav_to_mp3, file_content
         )
@@ -81,6 +81,7 @@ async def construct_filepath_and_check_if_file_exists(path: str):
     filepath = f"{settings.MEDIA_PATH}/{path}"
     if not os.path.isfile(filepath):
         raise AudioTrackFileNotFoundException
+    return filepath
 
 
 async def get_audiotrack(session: AsyncSession, audiotrack_id: UUID, user_id: int):

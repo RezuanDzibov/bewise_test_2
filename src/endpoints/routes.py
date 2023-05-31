@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from endpoints.users import router as user_router
 from endpoints.audiotracks import router as audiotrack_router
+from endpoints.users import router as user_router
 
 router = APIRouter()
 
