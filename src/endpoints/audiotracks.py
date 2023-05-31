@@ -1,5 +1,3 @@
-import os
-
 from fastapi import APIRouter, UploadFile, Depends, Form
 from fastapi.exceptions import HTTPException
 from fastapi.responses import FileResponse
@@ -11,7 +9,8 @@ from dependencies import get_session, get_user
 from schemas.audiotracks import AudioFileInSchema, AudioTrackOutSchema
 from schemas.users import UserSchema
 from services import audiotracks as audiotrack_services
-from exceptions import AudioFileCorruptException, AudioTrackNotFoundException
+from exceptions import AudioFileCorruptException, AudioTrackNotFoundException, AudioTrackFileNotFoundException
+from services.audiotracks import construct_filepath_and_check_if_file_exists
 
 settings = get_settings()
 router = APIRouter()
@@ -51,9 +50,10 @@ async def get_audiotrack_file(
         )
     except AudioTrackNotFoundException:
         raise HTTPException(status_code=404, detail="Audiotrack not found")
-    filepath = f"{settings.MEDIA_PATH}/{audiotrack.filepath}"
-    if not os.path.isfile(filepath):
-        raise HTTPException(status_code=404, detail="Audiotrack file not found")
+    try:
+        filepath = await construct_filepath_and_check_if_file_exists(path=audiotrack.filepath)
+    except AudioTrackFileNotFoundException:
+        raise HTTPException(status_code=404, detail="File not found")
     return FileResponse(
         path=filepath,
         filename=f"{audiotrack.filename}.mp3",
