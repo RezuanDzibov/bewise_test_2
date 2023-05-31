@@ -1,6 +1,6 @@
 <a name="readme-top"></a>
 
-<h3 align="center">Bewise test 2</h3>
+<h3 align="center">Bewise тестовое задание 2</h3>
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -16,7 +16,7 @@
       <a href="#getting-started">Подкотовка и запуск</a>
       <ul>
         <li><a href="#prerequisites">Предварительные условия</a></li>
-        <li><a href="#installation">Как запустить</a></li>
+        <li><a href="#how-to-launch">Как запустить</a></li>
       </ul>
     </li>
     <li><a href="#usage">Использование</a></li>
@@ -25,6 +25,7 @@
 
 
 <!-- ABOUT THE PROJECT -->
+<a name="about-the-project"></a>
 ## О проекте
 
 1. Создание пользователя
@@ -39,10 +40,11 @@ API предоставляет GET-запрос для скачивания ау
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+
+<a name="built-with"></a>
 ### Технологии
 
-Технологии которые использовались в этом проекте
-
+Фреймворки и библиотеки 
 * [![FastAPI][FastAPI]][FastAPI-url]
 * [![SQLAlchemy][SQLAlchemy]][SQLAlchemy-url]
 * [![Alembic][Alembic]][Alembic-url]
@@ -50,21 +52,25 @@ API предоставляет GET-запрос для скачивания ау
 * [![Pydub][Pydub]][Pydub-url]
 * [![Aiofiles][Aiofiles]][Aiofiles-url]
 
-
+База данных а также средства контейнеризации
 * [![Docker][Docker]][Docker-url]
 * [![PostgreSQL][PostgreSQL]][PostgreSQL-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
+<a name="getting-started"></a>
 ## Подготовка и запуск
 
+<a name="prerequisites"></a>
 ### Предварительные условия
 У вас должны быть установленны следущие приложения
 
 * docker
 * docker-compose
 
+
+<a name="how-to-launch"></a>
 ### Как запустить
 
 1. Скопируйте репозиторий
@@ -95,8 +101,8 @@ API предоставляет GET-запрос для скачивания ау
 
 
 <!-- USAGE EXAMPLES -->
+<a name="usage"></a>
 ## Примеры запросов
-
 
 Добавление пользователя
 
