@@ -27,5 +27,5 @@ async def get_user(
         access_token=auth_creds.credentials,
     )
     if not user:
-        raise HTTPException(status_code=404, detail="User not_found")
+        raise HTTPException(status_code=401, detail="Not authenticated")
     return user
