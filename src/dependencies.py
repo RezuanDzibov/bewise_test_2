@@ -2,8 +2,7 @@ from typing import AsyncGenerator
 
 from fastapi import Depends, Security, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import conint
-
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.db import SessionLocal
 from core.settings import get_settings
