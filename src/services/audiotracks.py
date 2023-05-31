@@ -55,6 +55,10 @@ def _convert_wav_to_mp3(file_content: bytes) -> bytes:
     return mp3_file.read()
 
 
+async def get_filename_with_mp3_extension(filename: str) -> str:
+    return f"{os.path.splitext(filename)[0]}.mp3"
+
+
 async def insert_audiotrack_and_get_it_id(
     session: AsyncSession, file: UploadFile, user_id: int
 ) -> UUID:
@@ -65,7 +69,7 @@ async def insert_audiotrack_and_get_it_id(
             pool, _convert_wav_to_mp3, file_content
         )
     filepath = await _generate_filepath(
-        filename=file.filename.split(".")[0] + ".mp3",
+        filename=await get_filename_with_mp3_extension(filename=file.filename),
         user_id=user_id,
     )
     await _save_file(filepath=filepath, file_content=file_content_in_mp3)
@@ -73,7 +77,7 @@ async def insert_audiotrack_and_get_it_id(
         session,
         user_id=user_id,
         filepath=filepath.split("/")[-1],
-        filename=f"{file.filename.split('.')[0]}.mp3",
+        filename=await get_filename_with_mp3_extension(filename=file.filename),
     )
 
 
