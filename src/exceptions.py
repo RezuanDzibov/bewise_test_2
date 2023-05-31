@@ -4,3 +4,7 @@ class AudioFileCorruptException(Exception):
 
 class AudioTrackNotFoundException(Exception):
     pass
+
+
+class AudioTrackFileNotFoundException(Exception):
+    pass
