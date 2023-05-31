@@ -1,6 +1,7 @@
 import asyncio
 import concurrent.futures
 import io
+import os.path
 from datetime import datetime
 from uuid import UUID
 
@@ -13,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.settings import get_settings
 from models.audiotracks import AudioTrack
-from exceptions import AudioFileCorruptException, AudioTrackNotFoundException
+from exceptions import AudioFileCorruptException, AudioTrackNotFoundException, AudioTrackFileNotFoundException
 
 settings = get_settings()
 
@@ -74,6 +75,12 @@ async def insert_audiotrack_and_get_it_id(
         filepath=filepath.split("/")[-1],
         filename=file.filename.split(".")[0],
     )
+
+
+async def construct_filepath_and_check_if_file_exists(path: str):
+    filepath = f"{settings.MEDIA_PATH}/{path}"
+    if not os.path.isfile(filepath):
+        raise AudioTrackFileNotFoundException
 
 
 async def get_audiotrack(session: AsyncSession, audiotrack_id: UUID, user_id: int):
