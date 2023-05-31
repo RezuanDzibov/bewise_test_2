@@ -8,3 +8,12 @@ class UserInSchema(BaseModel):
 class UserOutSchema(BaseModel):
     id: conint(ge=1)
     access_token: UUID4
+
+
+class UserSchema(BaseModel):
+    id: conint(ge=1)
+    username: str
+    access_token: UUID4
+
+    class Config:
+        orm_mode = True
