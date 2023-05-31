@@ -25,5 +25,4 @@ async def get_user_by_access_token(
     statement = select(User).where(User.access_token == access_token)
     result = await session.execute(statement)
     user = result.scalar()
-    if user:
-        return UserSchema.from_orm(user)
+    return UserSchema.from_orm(user) if user else None
