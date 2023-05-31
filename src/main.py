@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+import uvicorn
 from fastapi import FastAPI
 from starlette.responses import RedirectResponse
 
@@ -22,3 +23,7 @@ async def redirect_to_docs():
 async def startup():
     if not os.path.isdir(settings.MEDIA_PATH):
         Path.mkdir(settings.MEDIA_PATH)
+
+
+if __name__ == "__main__":
+    uvicorn.run(app)
