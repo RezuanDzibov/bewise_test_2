@@ -73,7 +73,7 @@ async def insert_audiotrack_and_get_it_id(
         session,
         user_id=user_id,
         filepath=filepath.split("/")[-1],
-        filename=file.filename.split(".")[0],
+        filename=f"{file.filename.split('.')[0]}.mp3",
     )
 
 

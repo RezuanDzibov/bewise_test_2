@@ -56,5 +56,5 @@ async def get_audiotrack_file(
         raise HTTPException(status_code=404, detail="File not found")
     return FileResponse(
         path=filepath,
-        filename=f"{audiotrack.filename}.mp3",
+        filename=audiotrack.filename,
     )
