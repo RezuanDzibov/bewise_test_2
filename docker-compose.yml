@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: postgres
+    container_name: postgres_bewise_2
     env_file:
       - .env
     restart: always
@@ -25,7 +25,7 @@ services:
     environment:
       RUN_IN_DOCKER: True
       POSTGRES_SERVICE_HOST: db
-    container_name: api
+    container_name: api_bewise_2
     depends_on:
       db:
         condition: service_healthy
