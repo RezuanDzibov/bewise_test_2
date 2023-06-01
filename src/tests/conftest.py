@@ -6,11 +6,14 @@ from typing import Generator, AsyncGenerator
 
 import pytest
 from faker import Faker
+from pytest_asyncio.plugin import SubRequest
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
+from tests import factories
 from core.settings import get_settings
-from models import Base
+from models import Base, User
+from schemas.audiotracks import AudioTrackSchema
 
 settings = get_settings()
 fake = Faker()
@@ -60,3 +63,40 @@ async def delete_all_media_after_tests() -> AsyncGenerator[None, None]:
     yield
     shutil.rmtree(settings.MEDIA_PATH)
     os.makedirs(settings.MEDIA_PATH)
+
+
+@pytest.fixture(scope="function")
+async def user(session: AsyncSession) -> User:
+    user = factories.UserFactory()
+    session.add(user)
+    await session.commit()
+    return user
+
+
+@pytest.fixture(scope="function")
+async def audiotrack(session: AsyncSession, user: User) -> AudioTrackSchema:
+    audiotrack = factories.AudioTrackFactory(author=user.id, filename="filename.mp3", filepath="filename.mp3")
+    session.add(audiotrack)
+    await session.commit()
+    return AudioTrackSchema.from_orm(audiotrack)
+
+
+@pytest.fixture(scope="function")
+async def audiotracks(request: SubRequest, session: AsyncSession, user: User) -> list[AudioTrackSchema]:
+    if (
+        hasattr(request, "param")
+        and isinstance(request.param, int)
+        and request.param > 0
+    ):
+        audiotrack_num = request.param
+    else:
+        audiotrack_num = 1
+    audiotracks = factories.AudioTrackFactory.build_batch(
+        audiotrack_num,
+        filename="filename.mp3",
+        filepath="filename.mp3",
+        author=user.id
+    )
+    session.add_all(audiotracks)
+    await session.commit()
+    return [AudioTrackSchema.from_orm(audiotrack) for audiotrack in audiotracks]
