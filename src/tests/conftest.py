@@ -1,4 +1,6 @@
 import asyncio
+import os
+import shutil
 from asyncio import AbstractEventLoop
 from typing import Generator, AsyncGenerator
 
@@ -51,3 +53,10 @@ async def session(
 ) -> AsyncGenerator[AsyncSession, None]:
     async with session_maker() as session:
         yield session
+
+
+@pytest.fixture(scope="function")
+async def delete_all_media_after_tests() -> AsyncGenerator[None, None]:
+    yield
+    shutil.rmtree(settings.MEDIA_PATH)
+    os.makedirs(settings.MEDIA_PATH)
