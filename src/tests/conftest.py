@@ -9,11 +9,13 @@ import aiofiles
 import pytest
 from faker import Faker
 from fastapi import UploadFile
+from httpx import AsyncClient
 from pytest_asyncio.plugin import SubRequest
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 from starlette.datastructures import Headers
 
+from main import app
 from schemas.users import UserSchema
 from tests import factories
 from core.settings import get_settings, BASE_DIR
@@ -161,3 +163,9 @@ async def users(request: SubRequest, session: AsyncSession) -> list[UserSchema]:
     session.add_all(users)
     await session.commit()
     return [UserSchema.from_orm(user) for user in users]
+
+
+@pytest.fixture(scope="function")
+async def test_client() -> AsyncClient:
+    async with AsyncClient(app=app, base_url="http://testserver") as client:
+        yield client
