@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, AsyncSessio
 from sqlalchemy.orm import sessionmaker
 from starlette.datastructures import Headers
 
+from schemas.users import UserSchema
 from tests import factories
 from core.settings import get_settings, BASE_DIR
 from models import Base, User
@@ -142,3 +143,19 @@ async def mp3_upload_file() -> UploadFile:
 @pytest.fixture(scope="function")
 async def built_user() -> User:
     return factories.UserFactory.build()
+
+
+@pytest.fixture(scope="function")
+async def users(request: SubRequest, session: AsyncSession) -> list[UserSchema]:
+    if (
+            hasattr(request, "param")
+            and isinstance(request.param, int)
+            and request.param > 0
+    ):
+        user_num = request.param
+    else:
+        user_num = 1
+    users = factories.UserFactory.build_batch(user_num)
+    session.add_all(users)
+    await session.commit()
+    return [UserSchema.from_orm(user) for user in users]
