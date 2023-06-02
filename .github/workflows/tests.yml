@@ -36,6 +36,9 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.11.1"
+    - name: Install ffmpeg
+      run: | 
+        sudo apt install ffmpeg libavcodec-extra -y
     - name: Install dependencies
       run: |
         pip install --upgrade pip
