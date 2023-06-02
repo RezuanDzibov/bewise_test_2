@@ -2,16 +2,20 @@ import asyncio
 import os
 import shutil
 from asyncio import AbstractEventLoop
+from io import BytesIO
 from typing import Generator, AsyncGenerator
 
+import aiofiles
 import pytest
 from faker import Faker
+from fastapi import UploadFile
 from pytest_asyncio.plugin import SubRequest
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
+from starlette.datastructures import Headers
 
 from tests import factories
-from core.settings import get_settings
+from core.settings import get_settings, BASE_DIR
 from models import Base, User
 from schemas.audiotracks import AudioTrackSchema
 
@@ -100,3 +104,36 @@ async def audiotracks(request: SubRequest, session: AsyncSession, user: User) ->
     session.add_all(audiotracks)
     await session.commit()
     return [AudioTrackSchema.from_orm(audiotrack) for audiotrack in audiotracks]
+
+
+@pytest.fixture(scope="function")
+async def upload_file() -> UploadFile:
+    async with aiofiles.open(f"{BASE_DIR}/src/tests/test_file.wav", "rb") as buffer:
+        file = UploadFile(
+            file=BytesIO(await buffer.read()),
+            filename="test_file.wav",
+            headers=Headers({"content-type": "audio/wav"})
+        )
+        return file
+
+
+@pytest.fixture(scope="function")
+async def invalid_upload_file() -> UploadFile:
+    bytes_content = bytearray(b"somecontent")
+    file = UploadFile(
+        file=BytesIO(bytes_content),
+        filename="test_file.wav",
+        headers=Headers({"content-type": "audio/wav"})
+    )
+    return file
+
+
+@pytest.fixture(scope="function")
+async def mp3_upload_file() -> UploadFile:
+    async with aiofiles.open(f"{BASE_DIR}/src/tests/test_file.mp3", "rb") as buffer:
+        file = UploadFile(
+            file=BytesIO(await buffer.read()),
+            filename="test_file.mp3",
+            headers=Headers({"content-type": "audio/wav"})
+        )
+        return file
