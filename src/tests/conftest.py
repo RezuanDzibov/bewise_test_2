@@ -65,7 +65,8 @@ async def session(
 
 @pytest.fixture(scope="function")
 async def delete_all_media_after_tests() -> AsyncGenerator[None, None]:
-    os.makedirs(settings.MEDIA_PATH)
+    if not os.path.isdir(settings.MEDIA_PATH):
+        os.makedirs(settings.MEDIA_PATH)
     yield
     shutil.rmtree(settings.MEDIA_PATH)
     os.makedirs(settings.MEDIA_PATH)
