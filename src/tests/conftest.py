@@ -137,3 +137,8 @@ async def mp3_upload_file() -> UploadFile:
             headers=Headers({"content-type": "audio/wav"})
         )
         return file
+
+
+@pytest.fixture(scope="function")
+async def built_user() -> User:
+    return factories.UserFactory.build()
