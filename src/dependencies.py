@@ -9,7 +9,6 @@ from core.settings import get_settings
 from schemas.users import UserSchema
 from services.users import get_user_by_access_token
 
-
 settings = get_settings()
 bearer = HTTPBearer()
 

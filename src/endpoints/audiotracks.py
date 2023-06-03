@@ -16,7 +16,6 @@ from schemas.users import UserSchema
 from services import audiotracks as audiotrack_services
 from services.audiotracks import construct_filepath_and_check_if_file_exists
 
-
 settings = get_settings()
 router = APIRouter()
 
