@@ -17,12 +17,12 @@ from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, AsyncSessio
 from sqlalchemy.orm import sessionmaker
 from starlette.datastructures import Headers
 
-from main import app
-from schemas.users import UserSchema
-from tests import factories
 from core.settings import get_settings, BASE_DIR
+from main import app
 from models import Base, User
 from schemas.audiotracks import AudioTrackSchema
+from schemas.users import UserSchema
+from tests import factories
 
 settings = get_settings()
 fake = Faker()

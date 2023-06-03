@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import User
-from services.users import insert_user
 from schemas.users import UserInSchema
+from services.users import insert_user
 
 
 async def test_with_valid_data(session: AsyncSession, built_user: User):

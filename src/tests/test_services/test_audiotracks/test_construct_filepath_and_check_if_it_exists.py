@@ -5,7 +5,6 @@ from core.settings import get_settings
 from exceptions import AudioTrackFileNotFoundException
 from services.audiotracks import construct_filepath_and_check_if_file_exists
 
-
 settings = get_settings()
 
 
