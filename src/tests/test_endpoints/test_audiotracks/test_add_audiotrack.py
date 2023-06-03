@@ -1,7 +1,11 @@
 from httpx import AsyncClient
 
 
-async def test_with_valid_data_and_file(auth_test_client_and_user: list, wav_file_in_bytes: bytes):
+async def test_with_valid_data_and_file(
+        auth_test_client_and_user: list,
+        wav_file_in_bytes: bytes,
+        delete_all_media_after_tests: None
+):
     auth_test_client, user = auth_test_client_and_user
     response = await auth_test_client.post(
         "/audiotrack",
