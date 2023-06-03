@@ -1,4 +1,3 @@
-import random
 from uuid import uuid4
 
 import pytest
@@ -24,7 +23,7 @@ async def test_audiotrack_not_exists(session: AsyncSession):
 async def test_many_audiotrack_exist(
     audiotracks: list[AudioTrackSchema], session: AsyncSession
 ):
-    audiotrack = random.choice(audiotracks)
+    audiotrack = audiotracks[0]
     audiotrack_in_db = await get_audiotrack(
         session=session, audiotrack_id=audiotrack.id, user_id=audiotrack.author
     )

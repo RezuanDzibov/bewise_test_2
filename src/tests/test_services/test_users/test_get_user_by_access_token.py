@@ -1,4 +1,3 @@
-import random
 from uuid import uuid4
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,7 +15,7 @@ async def test_user_exists(user: User, session: AsyncSession):
 
 
 async def test_many_user_exist(users: list[UserSchema], session: AsyncSession):
-    user = random.choice(users)
+    user = users[0]
     user_in_db = await get_user_by_access_token(
         session=session, access_token=user.access_token
     )
