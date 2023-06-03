@@ -172,11 +172,9 @@ async def test_client() -> AsyncClient:
 
 
 @pytest.fixture(scope="function")
-async def auth_test_client_and_user(user: User) -> AsyncClient:
-    async with AsyncClient(app=app, base_url="http://testserver", headers={
-        "Authorization": f"bearer {user.access_token}"
-    }) as client:
-        yield client, user
+async def auth_test_client_and_user(test_client: AsyncClient, user: User) -> AsyncClient:
+    test_client.headers["Authorization"] = f"bearer {user.access_token}"
+    yield test_client, user
 
 
 @pytest.fixture(scope="function")
