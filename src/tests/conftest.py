@@ -112,7 +112,7 @@ async def audiotracks(request: SubRequest, session: AsyncSession, user: User) ->
 
 
 @pytest.fixture(scope="function")
-async def upload_file() -> UploadFile:
+async def wav_upload_file() -> UploadFile:
     async with aiofiles.open(f"{BASE_DIR}/src/tests/test_file.wav", "rb") as buffer:
         file = UploadFile(
             file=BytesIO(await buffer.read()),
