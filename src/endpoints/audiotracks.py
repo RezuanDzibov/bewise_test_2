@@ -6,7 +6,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.settings import get_settings
 from dependencies import get_session, get_user
-from exceptions import AudioFileCorruptException, AudioTrackNotFoundException, AudioTrackFileNotFoundException
+from exceptions import (
+    AudioFileCorruptException,
+    AudioTrackNotFoundException,
+    AudioTrackFileNotFoundException,
+)
 from schemas.audiotracks import AudioFileInSchema, AudioTrackOutSchema
 from schemas.users import UserSchema
 from services import audiotracks as audiotrack_services
@@ -37,7 +41,9 @@ async def add_audiotrack(
         )
     except AudioFileCorruptException:
         raise HTTPException(status_code=400, detail="File corrupted")
-    return AudioTrackOutSchema(audiotrack_url=f"{settings.API_URL}/audiotrack?id={audiotrack_id}&user={user.id}")
+    return AudioTrackOutSchema(
+        audiotrack_url=f"{settings.API_URL}/audiotrack?id={audiotrack_id}&user={user.id}"
+    )
 
 
 @router.get("", response_class=FileResponse)
@@ -52,7 +58,9 @@ async def get_audiotrack_file(
     except AudioTrackNotFoundException:
         raise HTTPException(status_code=404, detail="Audiotrack not found")
     try:
-        filepath = await construct_filepath_and_check_if_file_exists(path=audiotrack.filepath)
+        filepath = await construct_filepath_and_check_if_file_exists(
+            path=audiotrack.filepath
+        )
     except AudioTrackFileNotFoundException:
         raise HTTPException(status_code=404, detail="File not found")
     return FileResponse(

@@ -13,3 +13,13 @@ class AudioFileInSchema(BaseModel):
 
 class AudioTrackOutSchema(BaseModel):
     audiotrack_url: HttpUrl
+
+
+class AudioTrackSchema(BaseModel):
+    id: UUID4
+    filepath: str
+    filename: str
+    author: conint(ge=1)
+
+    class Config:
+        orm_mode = True

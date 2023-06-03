@@ -1,7 +1,7 @@
 FROM python:3.11.3-slim
 
 RUN apt update \
-    && apt install curl ffmpeg libavcodec-extra -y \
+    && apt install ffmpeg libavcodec-extra -y \
     && rm -rf /var/cache/apt/* /var/lib/apt/lists/*
 
 ENV PYTHONUNBUFFERED=1 \
