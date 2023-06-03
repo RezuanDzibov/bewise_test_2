@@ -13,7 +13,11 @@ from sqlalchemy import insert, select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.settings import get_settings
-from exceptions import AudioFileCorruptException, AudioTrackNotFoundException, AudioTrackFileNotFoundException
+from exceptions import (
+    AudioFileCorruptException,
+    AudioTrackNotFoundException,
+    AudioTrackFileNotFoundException,
+)
 from models.audiotracks import AudioTrack
 from schemas.audiotracks import AudioTrackSchema
 
@@ -89,7 +93,9 @@ async def construct_filepath_and_check_if_file_exists(path: str):
     return filepath
 
 
-async def get_audiotrack(session: AsyncSession, audiotrack_id: UUID, user_id: int) -> AudioTrackSchema:
+async def get_audiotrack(
+    session: AsyncSession, audiotrack_id: UUID, user_id: int
+) -> AudioTrackSchema:
     statement = select(AudioTrack).where(
         and_(AudioTrack.id == audiotrack_id, AudioTrack.author == user_id)
     )

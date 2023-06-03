@@ -3,13 +3,17 @@ from httpx import AsyncClient
 from schemas.users import UserSchema
 
 
-async def test_with_valid_data(init_tables: None, test_client: AsyncClient, built_user: UserSchema):
+async def test_with_valid_data(
+    init_tables: None, test_client: AsyncClient, built_user: UserSchema
+):
     response = await test_client.post("/user", json={"username": built_user.username})
 
     assert response.status_code == 200
 
 
-async def test_with_not_exists_fields(init_tables: None, test_client: AsyncClient, built_user: UserSchema):
+async def test_with_not_exists_fields(
+    init_tables: None, test_client: AsyncClient, built_user: UserSchema
+):
     response = await test_client.post(
         "/user", json={"username": built_user.username, "age": 27}
     )
