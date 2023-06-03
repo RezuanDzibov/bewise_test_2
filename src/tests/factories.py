@@ -10,7 +10,6 @@ def slugify(name: str) -> str:
     return name.replace(" ", "_").lower()
 
 
-
 class UserFactory(factory.Factory):
     class Meta:
         model = User

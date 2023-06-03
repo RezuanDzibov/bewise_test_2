@@ -86,14 +86,18 @@ async def user(session: AsyncSession) -> User:
 
 @pytest.fixture(scope="function")
 async def audiotrack(session: AsyncSession, user: User) -> AudioTrackSchema:
-    audiotrack = factories.AudioTrackFactory(author=user.id, filename="filename.mp3", filepath="filename.mp3")
+    audiotrack = factories.AudioTrackFactory(
+        author=user.id, filename="filename.mp3", filepath="filename.mp3"
+    )
     session.add(audiotrack)
     await session.commit()
     return AudioTrackSchema.from_orm(audiotrack)
 
 
 @pytest.fixture(scope="function")
-async def audiotracks(request: SubRequest, session: AsyncSession, user: User) -> list[AudioTrackSchema]:
+async def audiotracks(
+    request: SubRequest, session: AsyncSession, user: User
+) -> list[AudioTrackSchema]:
     if (
         hasattr(request, "param")
         and isinstance(request.param, int)
@@ -103,10 +107,7 @@ async def audiotracks(request: SubRequest, session: AsyncSession, user: User) ->
     else:
         audiotrack_num = 1
     audiotracks = factories.AudioTrackFactory.build_batch(
-        audiotrack_num,
-        filename="filename.mp3",
-        filepath="filename.mp3",
-        author=user.id
+        audiotrack_num, filename="filename.mp3", filepath="filename.mp3", author=user.id
     )
     session.add_all(audiotracks)
     await session.commit()
@@ -119,7 +120,7 @@ async def wav_upload_file() -> UploadFile:
         file = UploadFile(
             file=BytesIO(await buffer.read()),
             filename="test_file.wav",
-            headers=Headers({"content-type": "audio/wav"})
+            headers=Headers({"content-type": "audio/wav"}),
         )
         return file
 
@@ -130,7 +131,7 @@ async def invalid_upload_file() -> UploadFile:
     file = UploadFile(
         file=BytesIO(bytes_content),
         filename="test_file.wav",
-        headers=Headers({"content-type": "audio/wav"})
+        headers=Headers({"content-type": "audio/wav"}),
     )
     return file
 
@@ -141,7 +142,7 @@ async def mp3_upload_file() -> UploadFile:
         file = UploadFile(
             file=BytesIO(await buffer.read()),
             filename="test_file.mp3",
-            headers=Headers({"content-type": "audio/wav"})
+            headers=Headers({"content-type": "audio/wav"}),
         )
         return file
 
@@ -154,9 +155,9 @@ async def built_user() -> User:
 @pytest.fixture(scope="function")
 async def users(request: SubRequest, session: AsyncSession) -> list[UserSchema]:
     if (
-            hasattr(request, "param")
-            and isinstance(request.param, int)
-            and request.param > 0
+        hasattr(request, "param")
+        and isinstance(request.param, int)
+        and request.param > 0
     ):
         user_num = request.param
     else:
@@ -174,7 +175,9 @@ async def test_client() -> AsyncClient:
 
 
 @pytest.fixture(scope="function")
-async def auth_test_client_and_user(test_client: AsyncClient, user: User) -> AsyncClient:
+async def auth_test_client_and_user(
+    test_client: AsyncClient, user: User
+) -> AsyncClient:
     test_client.headers["Authorization"] = f"bearer {user.access_token}"
     yield test_client, user
 
@@ -185,14 +188,15 @@ async def wav_file_in_bytes() -> bytes:
         yield await buffer.read()
 
 
-
 @pytest.fixture(scope="function")
-async def added_audiotrack(auth_test_client_and_user: list, wav_file_in_bytes: bytes) -> dict[str, str]:
+async def added_audiotrack(
+    auth_test_client_and_user: list, wav_file_in_bytes: bytes
+) -> dict[str, str]:
     auth_test_client, user = auth_test_client_and_user
     response = await auth_test_client.post(
         "/audiotrack",
         data={"user_id": user.id},
-        files={"file": ("test_file.wav", wav_file_in_bytes, "audio/wav")}
+        files={"file": ("test_file.wav", wav_file_in_bytes, "audio/wav")},
     )
     response_content = json.loads(response.content.decode("utf-8"))
     parsed_url = urlparse(response_content["audiotrack_url"])
