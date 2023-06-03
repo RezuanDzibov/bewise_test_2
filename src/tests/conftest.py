@@ -169,3 +169,17 @@ async def users(request: SubRequest, session: AsyncSession) -> list[UserSchema]:
 async def test_client() -> AsyncClient:
     async with AsyncClient(app=app, base_url="http://testserver") as client:
         yield client
+
+
+@pytest.fixture(scope="function")
+async def auth_test_client_and_user(user: User) -> AsyncClient:
+    async with AsyncClient(app=app, base_url="http://testserver", headers={
+        "Authorization": f"bearer {user.access_token}"
+    }) as client:
+        yield client, user
+
+
+@pytest.fixture(scope="function")
+async def wav_file_in_bytes() -> bytes:
+    async with aiofiles.open(f"{BASE_DIR}/src/tests/test_file.wav", "rb") as buffer:
+        yield await buffer.read()
