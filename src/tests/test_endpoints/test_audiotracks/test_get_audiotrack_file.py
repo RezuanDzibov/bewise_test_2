@@ -14,9 +14,11 @@ async def test_exists_audiotrack_and_file(
     delete_all_media_after_tests: None,
 ):
     auth_test_client, user = auth_test_client_and_user
+
     response = await auth_test_client.get(
         f"/audiotrack?id={added_audiotrack['id']}&user={added_audiotrack['user']}"
     )
+
     assert response.status_code == 200
 
 
@@ -24,7 +26,9 @@ async def test_not_exists_audiotrack(
     auth_test_client_and_user: list[AsyncClient, User]
 ):
     auth_test_client, user = auth_test_client_and_user
+
     response = await auth_test_client.get(f"/audiotrack?id={uuid4()}&user={user.id}")
+
     assert response.status_code == 404
 
 
@@ -35,5 +39,7 @@ async def test_not_exists_file(
     result = await session.execute(statement)
     user = result.scalar()
     test_client.headers["Authorization"] = f"bearer {user.access_token}"
+
     response = await test_client.get(f"/audiotrack?id={audiotrack.id}&user={user.id}")
+
     assert response.status_code == 404

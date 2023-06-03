@@ -13,7 +13,9 @@ async def test_with_valid_filepath(
 ):
     filename = "file.mp3"
     mocker.patch("os.path.isfile").return_value = True
+
     filepath = await construct_filepath_and_check_if_file_exists(path=filename)
+
     assert f"{settings.MEDIA_PATH}/{filename}" == filepath
 
 
@@ -22,5 +24,6 @@ async def test_with_invalid_filepath(
 ):
     filename = "file.mp3"
     mocker.patch("os.path.isfile").return_value = False
+
     with pytest.raises(AudioTrackFileNotFoundException):
         await construct_filepath_and_check_if_file_exists(path=filename)
