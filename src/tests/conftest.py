@@ -1,9 +1,11 @@
 import asyncio
+import json
 import os
 import shutil
 from asyncio import AbstractEventLoop
 from io import BytesIO
 from typing import Generator, AsyncGenerator
+from urllib.parse import urlparse, parse_qs
 
 import aiofiles
 import pytest
@@ -181,3 +183,17 @@ async def auth_test_client_and_user(test_client: AsyncClient, user: User) -> Asy
 async def wav_file_in_bytes() -> bytes:
     async with aiofiles.open(f"{BASE_DIR}/src/tests/test_file.wav", "rb") as buffer:
         yield await buffer.read()
+
+
+
+@pytest.fixture(scope="function")
+async def added_audiotrack(auth_test_client_and_user: list, wav_file_in_bytes: bytes) -> dict[str, str]:
+    auth_test_client, user = auth_test_client_and_user
+    response = await auth_test_client.post(
+        "/audiotrack",
+        data={"user_id": user.id},
+        files={"file": ("test_file.wav", wav_file_in_bytes, "audio/wav")}
+    )
+    response_content = json.loads(response.content.decode("utf-8"))
+    parsed_url = urlparse(response_content["audiotrack_url"])
+    return {key: value[0] for key, value in parse_qs(parsed_url.query).items()}
