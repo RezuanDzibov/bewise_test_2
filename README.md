@@ -105,7 +105,7 @@ API предоставляет GET-запрос для скачивания ау
 
 1. Получаем доступ к башу контейнера СУБД
    ```sh
-   docker exec -it postgres bash
+   docker exec -it postgres_bewise_2 bash
    ```
 
 2. Подключаемся к СУБД, вместо POSTGRES_USER надо подставить нужное значение из .env файла, по дефолту это bewise
