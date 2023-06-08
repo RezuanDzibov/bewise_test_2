@@ -86,7 +86,7 @@ async def insert_audiotrack_and_get_it_id(
     )
 
 
-async def construct_filepath_and_check_if_file_exists(path: str):
+async def construct_filepath_and_check_if_file_exists(path: str) -> str:
     filepath = f"{settings.MEDIA_PATH}/{path}"
     if not os.path.isfile(filepath):
         raise AudioTrackFileNotFoundException
